@@ -16,13 +16,13 @@ When working with URLs, using built-in libraries such as Python's `urlparse` or 
 To ensure you only accept well-formated *domain* names, use the following regex to validate extracted hostnames:
 
 ```
-^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,11}$
+^(?!.{254,})((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,63}$
 ```
 
 If you require punycode support, you can use the following regex:
 
 ```
-^(?:(?!-)(?:xn--[A-Za-z0-9-]{1,59}|(?!xn--)[A-Za-z0-9-]{1,63})(?<!-)\.)+(?:xn--[A-Za-z0-9]{2,7}|[A-Za-z]{2,11})$
+^(?!.{254,})(?:(?!-)(?:xn--[A-Za-z0-9-]{1,59}|(?!xn--)[A-Za-z0-9-]{1,63})(?<!-)\.)+(?:xn--[A-Za-z0-9-]{1,59}|[A-Za-z]{2,63})$
 ```
 
 **Note**: The above regular expressions should only be tested against extracted hostnames. Do not remove the anchors to attempt to extract hostnames from unformatted text, as it will lead to [ReDoS vulnerabilities](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS)
@@ -52,6 +52,8 @@ regexr.com
 g.com
 xn--d1ai6ai.xn--p1ai
 xn--stackoverflow.com
+lol.international
+xn--niato-otabd.xn--niato-otabd
 stackoverflow.xn--com
 stackoverflow.co.uk
 google.com.au
@@ -62,6 +64,7 @@ a.net
 0-wh-ao14-0.com-com.net
 a-1234567890-1234567890-1234567890-1234567890-1234567890-1234-z.eu.us
 www.google.com
+abcdefghijklmnopqrstuvwxyz.ABCDEFGHIJKLMNOPQRSTUVWXYZ
 google.com
 mkyong123.com
 mkyong-info.com
@@ -77,7 +80,6 @@ mkyong.com
 
 ```
 xn-fsqu00a.xn-0zwm56d
-abcdefghijklmnopqrstuvwxyz.ABCDEFGHIJKLMNOPQRSTUVWXYZ
 0123456789 +-.,!@#$%^&*();\\/|<>\"\'
 12345 -98.7 3.141 .6180 9,000 +42
 555.123.4567	+1-(800)-555-2468
@@ -88,6 +90,7 @@ com.g
 0-0o_.com
 -a.dot
 a-1234567890-1234567890-1234567890-1234567890-1234567890-12345-z.eu.us
+foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk.foo.co.uk
 mkyong.t.t.c
 mkyong,com
 mkyong
