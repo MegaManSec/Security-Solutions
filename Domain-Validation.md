@@ -25,20 +25,20 @@ If you require punycode support, you can use the following regex:
 ^(?!.{254,})(?:(?!-)(?:xn--[A-Za-z0-9-]{1,59}|(?!xn--)[A-Za-z0-9-]{1,63})(?<!-)\.)+(?:xn--[A-Za-z0-9-]{1,59}|[A-Za-z]{2,63})$
 ```
 
-**Note**: The above regular expressions should only be tested against extracted hostnames. Do not remove the anchors to attempt to extract hostnames from unformatted text, as it will lead to [ReDoS vulnerabilities](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS)
+**Note**: The above regular expressions should only be tested against extracted hostnames. Do not remove the anchors to attempt to extract hostnames from unformatted text, as it will lead to [ReDoS vulnerabilities](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS). If you need to parse unformatted text, split the text and attempt to parse URLs (or something like that).
 
 JavaScript's `URL`  constructor converts unicode to punycode. Python requires manual encoding:
 
 ```
 >>> urlparse("https://01-БЕЗОПАСНОСТЬ.рф").netloc
 '01-БЕЗОПАСНОСТЬ.рф'
->>> urlparse("https://01-БЕЗОПАСНОСТЬ.рф").netloc.encode('idna').decode()
+>>> urlparse("https://01-БЕЗОПАСНОСТЬ.рф").netloc.encode('idna').decode() # Decodes to to punycode
 'xn--01--8cdeyo3chcizco4m.xn--p1ai'
->>> urlparse("https://google.com").netloc.encode('idna').decode()
+>>> urlparse("https://google.com").netloc.encode('idna').decode() # No need to decode, but it doesn't hurt
 'google.com'
 ```
 
-The about punycode-supported regular expression has been tested:
+The above punycode-supported regular expression has been tested:
 
 **Pass**:
 
@@ -79,10 +79,13 @@ mkyong.com
 **Fail**:
 
 ```
+127.0.0.1
+1.2.3.4
 xn-fsqu00a.xn-0zwm56d
 0123456789 +-.,!@#$%^&*();\\/|<>\"\'
 12345 -98.7 3.141 .6180 9,000 +42
-555.123.4567	+1-(800)-555-2468
+555.123.4567
++1-(800)-555-2468
 g-.com
 com.g
 -g.com
