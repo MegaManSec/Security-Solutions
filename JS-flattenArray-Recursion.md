@@ -62,7 +62,7 @@ function flattenArray(array) {
 }
 ```
 
-In both cases, we can create a deeply nested array, and attempt to flatten it. This is an example of the first one:
+In both cases, a deeply nested array results in a stack overflow exception being raised when flattening. For example:
 
 ```
 > function flatten(array) {
