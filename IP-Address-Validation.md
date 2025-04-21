@@ -5,7 +5,7 @@ Validating IP addresses using regex is generally easy for IPv4, and generally di
 
 # IPv4
 
-To validate IPv4 addresses, the following two expressions work well.
+The following two expressions conform to the restrictions of standard IPv4 addresses.
 
 With PCRE:
 
@@ -19,7 +19,7 @@ With Extended Regular Expressions ([EXE](https://en.wikibooks.org/wiki/Regular_E
 ^((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])$
 ```
 
-The EXE version can be helpful when using grep. For example, my bashrc contains:
+The EXE version can be helpful when using grep (I don't like to use the `-P` flag). For example, my bashrc contains:
 
 ```
 alias ipgrep='grep -E "\b((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\b"'
