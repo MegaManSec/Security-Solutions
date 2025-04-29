@@ -27,8 +27,6 @@ If you require punycode support, you can use the following regex:
 
 **Note**: The above regular expressions should only be tested against extracted hostnames. Do not remove the anchors to attempt to extract hostnames from unformatted text, as it will lead to [ReDoS vulnerabilities](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS). If you need to parse unformatted text for hostnames, split the text by spaces, and attempt to parse URLs (or something like that), before applying the regex.
 
-**Note**: If you want to include *hostnames* (or other similar identifiers) which do not have a `.` separator (such as `hostname` or `my-local-hostname`), change `+(?:xn--[A-Za-z0-9-]{1,59}|[A-Za-z]{2,63}$` to `?(?:xn--[A-Za-z0-9-]{0,59}|[A-Za-z]{0,63}$` (or `+[A-Za-z]{2,63}$` to `?[A-Za-z]{0,63}$`).
-
 **Note**: If you want to consider IP addresses as valid domains or hostnames, use the expressions detailed in [IP Address Validation](/IP-Address-Validation.md).
 
 JavaScript's `URL` constructor automatically converts unicode to punycode. Python requires manual encoding:
