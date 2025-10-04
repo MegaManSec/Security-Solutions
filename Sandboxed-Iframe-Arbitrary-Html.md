@@ -73,7 +73,8 @@ In order to create a sandboxed iframe which allows interaction from the parent t
       };
     </script>
   </body>
-</html>```
+</html>
+```
 
 The arbitrary HTML content to be loaded here is `<!DOCTYPE html><html><body><h1>Hello</h1><script>alert("hello!")</script></body></html>`. A sandboxed iframe is created and a MessagePort listener is installed in the iframe, then the arbitrary HTML content is added.
 
