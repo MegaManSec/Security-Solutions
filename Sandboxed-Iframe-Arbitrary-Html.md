@@ -78,4 +78,4 @@ In order to create a sandboxed iframe which allows interaction from the parent t
 
 The arbitrary HTML content to be loaded here is `<!DOCTYPE html><html><body><h1>Hello</h1><script>alert("hello!")</script></body></html>`. A sandboxed iframe is created and a MessagePort listener is installed in the iframe, then the arbitrary HTML content is added.
 
-More information about this setup can be found on my blog post, [One-Way Sandboxed Iframes: Creating a Read-Only Iframe Sandbox That Can't Read Back](https://joshua.hu/rendering-sandboxing-arbitrary-html-content-iframe-interacting).
+More information about this setup can be found on my blog post, [One-Way Sandboxed Iframes: Creating a Read-Only Iframe Sandbox That Can't Read Back](https://joshua.hu/rendering-sandboxing-arbitrary-html-content-iframe-interacting)..
