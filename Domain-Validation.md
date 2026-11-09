@@ -22,10 +22,38 @@ To ensure you only accept well-formated *domain* names, use the following regex 
 If you require punycode support, you can use the following regex:
 
 ```
-^(?!.{254,})(?:(?!-)(?:xn--[A-Za-z0-9-]{1,59}|(?!xn--)[A-Za-z0-9-]{1,63})(?<!-)\.)+(?:xn--[A-Za-z0-9-]{1,59}|[A-Za-z]{2,63})$
+^(?!.{254,})(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+(?:xn--[A-Za-z0-9-]{1,59}|[A-Za-z]{2,63})(?<!-)$
 ```
 
+Without negative lookbehind, that becomes:
+
+```
+/^(?!.{254,})(?:[0-9A-Za-z](?:[0-9A-Za-z-]{0,61}[0-9A-Za-z])?\.)+(?:xn--[0-9A-Za-z-]{0,58}[0-9A-Za-z]|[A-Za-z]{2,63})$/
+```
+
+Linear-time engines like RE2, Go's `regexp`, and Rust's `regex` don't support lookarounds at all, so the length check has to move out of the regex:
+
+```go
+var domainRe = regexp.MustCompile(`^(?:[0-9A-Za-z](?:[0-9A-Za-z-]{0,61}[0-9A-Za-z])?\.)+(?:xn--[0-9A-Za-z-]{0,58}[0-9A-Za-z]|[A-Za-z]{2,63})$`)
+
+func validDomain(s string) bool {
+	return len(s) <= 253 && domainRe.MatchString(s)
+}
+```
+
+Domain names are case-insensitive, and the punycode expressions only match the `xn--` prefix in lowercase, so lowercase the input before testing it.
+
 **Note**: The above regular expressions should only be tested against extracted hostnames. Do not remove the anchors to attempt to extract hostnames from unformatted text, as it will lead to [ReDoS vulnerabilities](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS). If you need to parse unformatted text for hostnames, split the text by spaces, and attempt to parse URLs (or something like that), before applying the regex.
+
+**Note**: The anchors also need to mean the start and end of the whole string. In Python, PHP, and Perl, `$` also matches just before a trailing newline, so `google.com\n` passes. In Ruby, `^` and `$` match at the start and end of every line, so `evil<script>\ngoogle.com` passes too. Use `re.fullmatch()` or `\Z` in Python, `\A` and `\z` in Ruby and Perl, and the `D` modifier in PHP. JavaScript and Go are fine as they are. Even in an engine without ReDoS problems, an expression without anchors accepts any text that contains a domain, like `<script>google.com`.
+
+If you want to include *hostnames* (or other similar identifiers) which do not have a `.` separator (such as `hostname` or `my-local-hostname`), make the dotted labels optional, and allow any label as the last one as long as it starts with a letter:
+
+```
+^(?!.{254,})(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)*[A-Za-z][A-Za-z0-9-]{0,62}(?<!-)$
+```
+
+Requiring a letter at the start of the last label keeps IP addresses like `127.0.0.1` out, since URL parsers treat a numeric (or `0x`) last label as IPv4.
 
 **Note**: If you want to consider IP addresses as valid domains or hostnames, use the expressions detailed in [IP Address Validation](/IP-Address-Validation.md).
 
@@ -34,13 +62,13 @@ JavaScript's `URL` constructor automatically converts unicode to punycode. Pyth
 ```
 >>> urlparse("https://01-БЕЗОПАСНОСТЬ.рф").netloc
 '01-БЕЗОПАСНОСТЬ.рф'
->>> urlparse("https://01-БЕЗОПАСНОСТЬ.рф").netloc.encode('idna').decode() # Decodes to to punycode
+>>> urlparse("https://01-БЕЗОПАСНОСТЬ.рф").netloc.encode('idna').decode() # Decodes to punycode
 'xn--01--8cdeyo3chcizco4m.xn--p1ai'
 >>> urlparse("https://google.com").netloc.encode('idna').decode() # No need to decode, but it doesn't hurt
 'google.com'
 ```
 
-The above punycode-supported regular expression has been tested:
+The above punycode-supported regular expressions have been tested against:
 
 **Pass**:
 
@@ -105,4 +133,5 @@ mkyong.123
 mkyong-.com
 sub.-mkyong.com
 sub.mkyong-.com
+stackoverflow.xn--com-
 ```
